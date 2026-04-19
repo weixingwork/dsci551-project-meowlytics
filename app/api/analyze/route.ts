@@ -11,8 +11,6 @@ import {
   getAnalyzeQuotaRetryAfterSeconds,
 } from "@/lib/auth/analyze-quota";
 
-const genAI = new GoogleGenerativeAI(env.GOOGLE_API_KEY);
-
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/jpeg",
   "image/png",
@@ -103,8 +101,15 @@ export async function POST(request: NextRequest) {
       })
     );
 
+    if (!env.GOOGLE_API_KEY) {
+      return NextResponse.json(
+        { error: "AI analysis is not available (GOOGLE_API_KEY not configured)." },
+        { status: 503 }
+      );
+    }
+
     // 调用 Gemini
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = new GoogleGenerativeAI(env.GOOGLE_API_KEY).getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const multiImageNote =
       imageFiles.length > 1

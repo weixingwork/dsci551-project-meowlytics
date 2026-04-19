@@ -12,6 +12,9 @@ import { env } from "@/lib/env";
 const AI_MODEL = "gemini-2.0-flash";
 
 function getGenAIClient(): GoogleGenerativeAI {
+  if (!env.GOOGLE_API_KEY) {
+    throw new Error("GOOGLE_API_KEY is not configured");
+  }
   return new GoogleGenerativeAI(env.GOOGLE_API_KEY);
 }
 

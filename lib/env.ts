@@ -1,6 +1,6 @@
 interface EnvShape {
   DATABASE_URL: string;
-  GOOGLE_API_KEY: string;
+  GOOGLE_API_KEY: string | undefined;
   AUTH_SECRET: string;
   ADMIN_EMAILS: string[];
 }
@@ -48,7 +48,7 @@ function getAuthSecret(): string {
 
 function buildEnv(): EnvShape {
   const DATABASE_URL = getRequiredEnv("DATABASE_URL");
-  const GOOGLE_API_KEY = getRequiredEnv("GOOGLE_API_KEY");
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY?.trim() || undefined;
   const AUTH_SECRET = getAuthSecret();
   const ADMIN_EMAILS = parseAdminEmails(process.env.ADMIN_EMAILS);
 
