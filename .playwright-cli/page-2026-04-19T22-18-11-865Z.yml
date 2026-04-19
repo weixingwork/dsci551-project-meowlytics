@@ -1,0 +1,98 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "M Meowlytics Ingredient Intelligence" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: M
+          - generic [ref=e9]:
+            - paragraph [ref=e10]: Meowlytics
+            - paragraph [ref=e11]: Ingredient Intelligence
+        - navigation "Main navigation" [ref=e12]:
+          - generic [ref=e13]:
+            - link "Analyze" [ref=e14] [cursor=pointer]:
+              - /url: /
+              - img [ref=e15]
+              - generic [ref=e18]: Analyze
+            - link "Favorites" [ref=e19] [cursor=pointer]:
+              - /url: /favorites
+              - img [ref=e20]
+              - generic [ref=e22]: Favorites
+        - generic [ref=e23]:
+          - button "Sign in" [active] [ref=e24]
+          - button "Sign up" [ref=e25]
+    - dialog "Sign in or sign up" [ref=e90]:
+      - generic [ref=e91]:
+        - heading "Account" [level=2] [ref=e92]:
+          - img [ref=e93]
+          - text: Account
+        - button "Close" [ref=e96]:
+          - img [ref=e97]
+      - generic [ref=e100]:
+        - button "Sign in" [ref=e101]
+        - button "Sign up" [ref=e102]
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - generic [ref=e105]: Email
+          - textbox "you@example.com" [ref=e106]
+        - generic [ref=e107]:
+          - generic [ref=e108]: Password
+          - generic [ref=e109]:
+            - textbox "At least 8 characters" [ref=e110]
+            - button "Show password" [ref=e111]:
+              - img [ref=e112]
+        - button "Forgot password?" [ref=e116]
+        - button "Sign in" [ref=e117]
+    - main [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e29]:
+          - paragraph [ref=e30]: Pet nutrition decision platform
+          - heading "Turn complex labels into actionable buying decisions" [level=1] [ref=e31]:
+            - text: Turn complex labels into
+            - generic [ref=e32]: actionable
+            - generic [ref=e33]: buying decisions
+          - paragraph [ref=e34]: Upload the ingredient label and get a structured nutrition report, risk flags, and fit recommendations in 30 seconds. Analyze first, then buy.
+          - generic [ref=e35]:
+            - generic [ref=e36]: AI + knowledge base
+            - generic [ref=e37]: Structured report in 30s
+            - generic [ref=e38]: Save and compare side-by-side
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - generic [ref=e45]: Upload ingredient label photo
+          - paragraph [ref=e46]: Capture the full ingredient list with good lighting and clear text.
+          - button "Click to upload or drag images here JPEG / PNG / WEBP, max 5MB" [ref=e47]
+          - generic [ref=e49] [cursor=pointer]:
+            - img [ref=e50]
+            - generic [ref=e53]: Click to upload or drag images here
+            - generic [ref=e54]: JPEG / PNG / WEBP, max 5MB
+          - paragraph [ref=e55]: Label too long for one shot? Upload up to 3 photos and we'll combine them.
+          - generic [ref=e56]:
+            - paragraph [ref=e57]: 1. Upload image
+            - paragraph [ref=e58]: 2. AI parses
+            - paragraph [ref=e59]: 3. Decide
+          - generic [ref=e60]:
+            - paragraph [ref=e61]: "Status: waiting for analysis"
+            - paragraph [ref=e62]: Upload images and click "Start analysis" — the report will appear here.
+    - contentinfo [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - heading "Meowlytics" [level=3] [ref=e67]
+            - paragraph [ref=e68]: Turn cat food ingredient labels into readable, comparable, actionable health insights.
+          - generic [ref=e69]:
+            - heading "Navigation" [level=3] [ref=e70]
+            - generic [ref=e71]:
+              - link "Analyze" [ref=e72] [cursor=pointer]:
+                - /url: /
+              - link "Favorites" [ref=e73] [cursor=pointer]:
+                - /url: /favorites
+              - link "Account" [ref=e74] [cursor=pointer]:
+                - /url: /account
+          - generic [ref=e75]:
+            - heading "Tips" [level=3] [ref=e76]
+            - paragraph [ref=e77]: Before switching foods, upload the ingredient label and consider your cat's condition.
+        - paragraph [ref=e78]: © 2026 Meowlytics. For pet nutrition reference only.
+  - button "Open Next.js Dev Tools" [ref=e85] [cursor=pointer]:
+    - img [ref=e86]
+  - alert [ref=e79]

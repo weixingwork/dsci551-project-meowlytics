@@ -31,11 +31,14 @@ bash dsci551/setup.sh
 This script will:
 
 1. Create a local database `meowlytics_551`
-2. Auto-adjust `DATABASE_URL` in `.env` to your local postgres username
+2. Auto-adjust the committed demo `DATABASE_URL` in `.env` to your local postgres username
 3. Install npm dependencies
 4. Push the Prisma schema (creates all tables + B-tree indexes)
 5. Seed deterministic synthetic data (10k ingredients · 51 users · 5k favorites)
 6. Run a smoke-test `EXPLAIN ANALYZE` to confirm the index is being used
+
+If you have already customized `DATABASE_URL`, the setup script preserves
+your value.
 
 Then:
 
@@ -47,8 +50,11 @@ npm run dev                   # open http://localhost:3000
 ### Running the query-plan evidence
 
 ```bash
-for f in dsci551/explain/*.sql; do psql meowlytics_551 -f "$f"; done
+for f in dsci551/explain/*.sql; do psql -P pager=off meowlytics_551 -f "$f"; done
 ```
+
+The `-P pager=off` option keeps the output in the terminal instead of
+opening the `(END)` pager screen.
 
 Expected plans and execution times are documented in
 [`dsci551/README.md §5`](dsci551/README.md).

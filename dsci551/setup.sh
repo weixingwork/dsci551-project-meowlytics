@@ -28,33 +28,42 @@ echo "✅ psql: $(psql --version)"
 echo "✅ node: $(node --version)"
 echo
 
+LOCAL_PG_USER="${PGUSER:-$(whoami)}"
+DB_NAME="meowlytics_551"
+DEFAULT_DEMO_URL="postgresql://xingwei@localhost:5432/${DB_NAME}"
+LOCAL_DEMO_URL="postgresql://${LOCAL_PG_USER}@localhost:5432/${DB_NAME}"
+
 # -------------------------------------------------------------
 # 2. Create database (idempotent)
 # -------------------------------------------------------------
-if psql -l 2>/dev/null | grep -q meowlytics_551; then
-  echo "ℹ️  Database meowlytics_551 already exists — skipping createdb"
+if psql -l 2>/dev/null | grep -q "$DB_NAME"; then
+  echo "ℹ️  Database $DB_NAME already exists — skipping createdb"
 else
-  echo "🛠  Creating database meowlytics_551..."
-  createdb meowlytics_551
+  echo "🛠  Creating database $DB_NAME..."
+  createdb "$DB_NAME"
 fi
 echo
 
 # -------------------------------------------------------------
-# 3. Copy .env template if missing
+# 3. Prepare .env for the local PostgreSQL role
 # -------------------------------------------------------------
 if [[ ! -f .env ]]; then
   echo "📝 Copying dsci551/.env.example → .env"
   cp dsci551/.env.example .env
-  CURRENT_USER="$(whoami)"
-  # Replace the placeholder 'xingwei' with the current user so it works
-  # out of the box on the grader's machine.
-  if [[ "$CURRENT_USER" != "xingwei" ]]; then
-    sed -i.bak "s|postgresql://xingwei@|postgresql://${CURRENT_USER}@|" .env
-    rm -f .env.bak
-    echo "   Adjusted DATABASE_URL for user '${CURRENT_USER}'"
-  fi
 else
-  echo "ℹ️  .env already exists — leaving it untouched"
+  echo "ℹ️  .env already exists"
+fi
+
+# The public repo intentionally commits a demo-safe .env. On another
+# machine, that file may still contain Wei's local role. Replace only
+# the known demo default; preserve any custom DATABASE_URL the grader
+# has already configured.
+if grep -q "DATABASE_URL=\"${DEFAULT_DEMO_URL}\"" .env; then
+  sed -i.bak "s|DATABASE_URL=\"${DEFAULT_DEMO_URL}\"|DATABASE_URL=\"${LOCAL_DEMO_URL}\"|" .env
+  rm -f .env.bak
+  echo "🔧 Adjusted DATABASE_URL for local postgres role '${LOCAL_PG_USER}'"
+else
+  echo "ℹ️  Keeping existing DATABASE_URL in .env"
 fi
 echo
 
@@ -87,7 +96,7 @@ echo
 # 7. Smoke test — run one EXPLAIN to confirm
 # -------------------------------------------------------------
 echo "🔬 Smoke test — running exact-lookup EXPLAIN ANALYZE..."
-psql meowlytics_551 -c "EXPLAIN ANALYZE SELECT * FROM \"Ingredient\" WHERE \"nameEn\" = 'Chicken';"
+psql "$DB_NAME" -c "EXPLAIN ANALYZE SELECT * FROM \"Ingredient\" WHERE \"nameEn\" = 'Chicken';"
 echo
 
 echo "✅ Setup complete."

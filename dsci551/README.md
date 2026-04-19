@@ -45,10 +45,16 @@ bash dsci551/setup.sh
 This will:
 
 1. Create the local database `meowlytics_551`
-2. Copy `dsci551/.env.example` to `.env` and prompt you to edit the username
+2. Prepare `.env` for the local PostgreSQL role
 3. Run `npx prisma db push` to create tables and indexes
 4. Run the deterministic seed script (10,000 ingredients, 51 users, 5,000 favorites)
 5. Print the demo user's id for use in EXPLAIN examples
+
+The repository includes a demo-safe `.env`. If it still contains the
+default URL `postgresql://xingwei@localhost:5432/meowlytics_551`,
+`setup.sh` automatically rewrites only that value to your local
+PostgreSQL role, normally your shell username from `whoami`. If you
+already customized `DATABASE_URL`, the script leaves it unchanged.
 
 If you prefer to run the steps manually, see **Section 3**.
 
@@ -69,6 +75,8 @@ cp dsci551/.env.example .env
 # Edit .env and change the username in DATABASE_URL to match
 # your local postgres role. On macOS/Homebrew this is usually
 # your shell username (e.g. 'xingwei').
+# Or run `bash dsci551/setup.sh`; it automatically rewrites the
+# committed demo default when needed.
 ```
 
 ### 3.3 Install dependencies
@@ -159,15 +167,18 @@ npm run dev
 
 ## 5. Running the EXPLAIN ANALYZE evidence
 
-All five scripts are self-contained `psql` files. From the repo root:
+All six scripts are self-contained `psql` files. From the repo root:
+
+The commands use `-P pager=off` so the output prints directly in the
+terminal instead of opening the `(END)` pager screen.
 
 ```bash
-psql meowlytics_551 -f dsci551/explain/01-ingredient-exact-lookup.sql
-psql meowlytics_551 -f dsci551/explain/02-favorites-composite-index.sql
-psql meowlytics_551 -f dsci551/explain/03-fuzzy-ilike-seq-scan.sql
-psql meowlytics_551 -f dsci551/explain/04-with-vs-without-index.sql
-psql meowlytics_551 -f dsci551/explain/05-small-vs-large-data.sql
-psql meowlytics_551 -f dsci551/explain/06-mvcc-snapshot-isolation.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/01-ingredient-exact-lookup.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/02-favorites-composite-index.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/03-fuzzy-ilike-seq-scan.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/04-with-vs-without-index.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/05-small-vs-large-data.sql
+psql -P pager=off meowlytics_551 -f dsci551/explain/06-mvcc-snapshot-isolation.sql
 ```
 
 Script 04 drops and recreates an index, so it is safe to rerun. Script
@@ -222,8 +233,23 @@ export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 ```
 
 **`FATAL: role "xingwei" does not exist`**
-The `.env.example` has a placeholder username. Edit `.env` and replace
-`xingwei` with your local postgres role (run `whoami` to see it).
+Run `bash dsci551/setup.sh`; it rewrites the committed demo default to
+your local PostgreSQL role. If you are doing manual setup, edit `.env`
+and replace `xingwei` with your local postgres role (`whoami` on most
+macOS/Homebrew installs).
+
+**`FATAL: role "<your-username>" does not exist`**
+Create a local PostgreSQL role for your shell user, then rerun setup:
+
+```bash
+createuser -s "$(whoami)"   # macOS/Homebrew, if your postgres install allows it
+```
+
+On Ubuntu/Debian, you may need:
+
+```bash
+sudo -u postgres createuser --superuser "$USER"
+```
 
 **`createdb: error: connection to server ... failed`**
 PostgreSQL isn't running. Start it:
