@@ -1,8 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-import { isValidAnalysisResult } from "@/lib/validation/analysis";
+import { sanitizeAnalysisResult } from "@/lib/validation/analysis";
 import { env } from "@/lib/env";
-import { AnalysisResult } from "@/app/(main)/types";
 import { requireUser } from "@/lib/auth/require-user";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/auth/rate-limit";
 import { getRateLimitConfig } from "@/lib/auth/rate-limit-config";
@@ -109,7 +108,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 调用 Gemini
-    const model = new GoogleGenerativeAI(env.GOOGLE_API_KEY).getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = new GoogleGenerativeAI(env.GOOGLE_API_KEY).getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const multiImageNote =
       imageFiles.length > 1
@@ -172,53 +171,36 @@ Please make sure the return value is valid JSON and all ingredient names and tex
     const response = await result.response;
     const text = response.text();
 
-    // 尝试解析 JSON
+    let parsed: unknown = null;
     try {
-      const jsonData: AnalysisResult = JSON.parse(text);
-      if (!isValidAnalysisResult(jsonData)) {
-        return NextResponse.json(
-          { error: "Invalid AI response shape", rawText: text },
-          { status: 500 }
-        );
-      }
-      return NextResponse.json({
-        analysis: jsonData,
-        quota: {
-          limit: rateLimits.analyzeUserPerDay,
-          used: quota.used,
-          remaining: quota.remaining,
-        },
-      });
+      parsed = JSON.parse(text);
     } catch {
-      // 如果解析失败，尝试提取 JSON（可能被包裹在 markdown 代码块中）
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         try {
-          const jsonData: AnalysisResult = JSON.parse(jsonMatch[0]);
-          if (!isValidAnalysisResult(jsonData)) {
-            return NextResponse.json(
-              { error: "Invalid AI response shape", rawText: text },
-              { status: 500 }
-            );
-          }
-          return NextResponse.json({
-            analysis: jsonData,
-            quota: {
-              limit: rateLimits.analyzeUserPerDay,
-              used: quota.used,
-              remaining: quota.remaining,
-            },
-          });
+          parsed = JSON.parse(jsonMatch[0]);
         } catch {
           console.error("Failed to parse extracted JSON:", text);
         }
       }
-      // 如果仍然失败，返回原始文本
-      return NextResponse.json({
-        error: "Failed to parse AI response as JSON",
-        rawText: text
-      }, { status: 500 });
     }
+
+    const sanitized = sanitizeAnalysisResult(parsed);
+    if (!sanitized) {
+      console.error("Invalid AI response shape. rawText:", text);
+      return NextResponse.json(
+        { error: "Invalid AI response shape", rawText: text },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({
+      analysis: sanitized,
+      quota: {
+        limit: rateLimits.analyzeUserPerDay,
+        used: quota.used,
+        remaining: quota.remaining,
+      },
+    });
   } catch (error) {
     console.error("Analysis error:", error);
     return NextResponse.json(

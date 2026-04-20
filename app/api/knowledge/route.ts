@@ -9,7 +9,7 @@ import {
 import { isValidNewIngredientKnowledge } from "@/lib/knowledge/validation";
 import { env } from "@/lib/env";
 
-const AI_MODEL = "gemini-2.0-flash";
+const AI_MODEL = "gemini-2.5-flash";
 
 function getGenAIClient(): GoogleGenerativeAI {
   if (!env.GOOGLE_API_KEY) {

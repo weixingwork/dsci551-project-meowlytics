@@ -97,7 +97,7 @@ Speaker script:
 >
 > PostgreSQL is a good fit because this workload has frequent exact lookups, user-specific ordered retrieval, and concurrent reads and writes.
 >
-> For the demo, I use a deterministic synthetic dataset: 10,000 ingredients, 51 users, and 5,000 favorites, including 2,000 favorites for the demo user.
+> For the demo, I use a script generating dataset: 10,000 ingredients, 51 users, and 5,000 favorites, including 2,000 favorites for the demo user.
 
 Live app action:
 
