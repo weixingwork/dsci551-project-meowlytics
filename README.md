@@ -15,7 +15,7 @@ This repository is the final project submission for DSCI 551. It contains:
 
 ---
 
-## 📖 For graders — start here
+##  For graders — start here
 
 **All grading-relevant material lives in [`dsci551/`](dsci551/).**
 The detailed setup, mapping tables, and expected `EXPLAIN ANALYZE`
@@ -61,13 +61,13 @@ Expected plans and execution times are documented in
 
 ---
 
-## 🗂 Repository layout
+##  Repository layout
 
 ```
 dsci551-project-meowlytics/
 ├── README.md                    ← this file — high-level orientation
 ├── .env                         ← committed demo-safe local config
-├── dsci551/                     ← ⭐ grading-relevant material
+├── dsci551/                     ←  grading-relevant material
 │   ├── README.md                ← detailed reproducer + mapping table
 │   ├── setup.sh                 ← one-command reproducer
 │   ├── .env.example             ← template mirror of committed .env
@@ -87,7 +87,7 @@ dsci551-project-meowlytics/
 
 ---
 
-## 🔑 Demo credentials
+##  Demo credentials
 
 | Field | Value |
 |---|---|
@@ -97,7 +97,7 @@ dsci551-project-meowlytics/
 
 ---
 
-## 🎯 Application operations → PostgreSQL internals
+##  Application operations → PostgreSQL internals
 
 | Application operation | Internal mechanism | Evidence |
 |---|---|---|
@@ -110,7 +110,7 @@ dsci551-project-meowlytics/
 
 ---
 
-## 📝 About the application (context)
+##  About the application (context)
 
 Meowlytics helps cat owners analyze cat-food ingredient labels using an AI
 model that extracts ingredients and generates structured assessments. Stored
@@ -126,6 +126,6 @@ internal mechanism.
 
 ---
 
-## 📄 License
+## License
 
 Course project, not intended for production use.

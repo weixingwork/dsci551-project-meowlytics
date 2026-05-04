@@ -119,14 +119,14 @@ npx tsx dsci551/seed/seed.ts
 Output on success:
 
 ```
-✅ Seed complete in ~2s
+Seed complete in ~2s
 
 📋 Summary:
   Ingredients: 10000
   Users:       51
   Favorites:   5000
 
-🔑 Demo credentials:
+ Demo credentials:
   email:    demo@551.edu
   password: demo551
   user id:  <copied cuid>
