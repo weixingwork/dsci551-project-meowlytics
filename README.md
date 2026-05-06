@@ -100,7 +100,7 @@ The full discussion lives in
 | # | Application operation | SQL pattern | Internal mechanism observed | Evidence |
 |---|---|---|---|---|
 | 1 | Click an ingredient to see its analysis | `WHERE nameEn = 'Chicken'` | B-tree **Index Scan** via `Ingredient_nameEn_idx` | [`01`](dsci551/explain/01-ingredient-exact-lookup.sql) |
-| 2 | Open the Favorites page | `WHERE userId = ? ORDER BY createdAt DESC LIMIT 20` | Composite B-tree, **Index Scan Backward**, no separate Sort node | [`02`](dsci551/explain/02-favorites-composite-index.sql) |
+| 2 | Open the Favorites page | `WHERE userId = ? ORDER BY createdAt DESC` | Composite B-tree, **Index Scan Backward**, no separate Sort node | [`02`](dsci551/explain/02-favorites-composite-index.sql) |
 | 3 | Substring search fallback | `WHERE nameEn ILIKE '%chick%'` | **Sequential Scan** — leading wildcard defeats the B-tree | [`03`](dsci551/explain/03-fuzzy-ilike-seq-scan.sql) |
 | 4 | Demonstrate planner cost sensitivity | Drop the index, repeat the query | Plan flips from Index Scan to Seq Scan and back | [`04`](dsci551/explain/04-with-vs-without-index.sql) |
 | 5 | Same query on small vs large data | 100-row vs 10,000-row table | Planner chooses Seq Scan for tiny tables even when the index exists | [`05`](dsci551/explain/05-small-vs-large-data.sql) |

@@ -255,8 +255,10 @@ hits is the empirical justification for adding the `nameEn` index.
 **File:** [`explain/02-favorites-composite-index.sql`](explain/02-favorites-composite-index.sql)
 
 **What it tests.** Loading the Favorites page for a logged-in user.
-The query filters by `userId` and orders the results by `createdAt`
-descending.
+The application query filters by `userId` and orders all of that user's
+favorites by `createdAt` descending. The evidence script adds
+`LIMIT 20` only to keep the demo output compact and to show that the
+executor can stop early when a page-sized result is requested.
 
 **The query.**
 
@@ -288,8 +290,10 @@ Execution Time: ~0.19 ms
   produces rows in `createdAt DESC` order.
 - The plan contains **no separate `Sort` node**: the ordering is "free"
   from the index structure.
-- The `Limit 20` causes the executor to stop after 20 leaf entries
-  rather than read all 2,000 favorites belonging to the demo user.
+- In the evidence query, `Limit 20` causes the executor to stop after
+  20 leaf entries rather than read all 2,000 favorites belonging to the
+  demo user. The current application route does not apply this limit;
+  it retrieves all matching favorites in index order.
 
 **Why it matters.** This is the textbook example of why composite
 index column order must reflect the query's combined filter and sort
@@ -501,7 +505,7 @@ what guarantees a consistent view of the data within each transaction.
 | # | Application operation | SQL the application issues | PostgreSQL internal mechanism | Evidence |
 |---|---|---|---|---|
 | 1 | Click an ingredient | `WHERE nameEn = 'Chicken'` | B-tree Index Scan via `Ingredient_nameEn_idx` | [01](explain/01-ingredient-exact-lookup.sql) |
-| 2 | Open Favorites page | `WHERE userId = ? ORDER BY createdAt DESC LIMIT 20` | Composite B-tree Index Scan Backward; no separate Sort node | [02](explain/02-favorites-composite-index.sql) |
+| 2 | Open Favorites page | `WHERE userId = ? ORDER BY createdAt DESC` | Composite B-tree Index Scan Backward; no separate Sort node | [02](explain/02-favorites-composite-index.sql) |
 | 3 | Substring search fallback | `WHERE nameEn ILIKE '%chick%'` | Sequential Scan; B-tree cannot serve leading-wildcard patterns | [03](explain/03-fuzzy-ilike-seq-scan.sql) |
 | 4 | Validate index value | Drop and recreate `Ingredient_nameEn_idx` | Plan flips Seq Scan to Index Scan and back; pure cost-based decision | [04](explain/04-with-vs-without-index.sql) |
 | 5 | Selectivity sensitivity | Same exact lookup on 100-row vs 10,000-row table | Planner chooses Seq Scan for 100 rows; Index Scan for 10,000 | [05](explain/05-small-vs-large-data.sql) |
