@@ -66,78 +66,8 @@ Four B-tree indexes are declared (excluding implicit PK indexes), each tied to a
 | `Ingredient_source_idx` | `Ingredient` | Filter by `knowledge_base` vs `ai_generated` |
 | `Favorite_userId_createdAt_idx` | `Favorite` | Composite: filter by user + sort by time |
 
-> **Prisma schema with indexes**
->
-> ```python
-> model Ingredient {
->   id              String   @id @default(cuid())
->   name            String
->   nameEn          String
->   aliases         String[]
->   category        String
->   healthImpact    String
->   description     String
->   benefits        String[]
->   concerns        String[]
->   suitableFor     String[]
->   notSuitableFor  String[]
->   source          String
->   
->   createdAt       DateTime @default(now())
->   updatedAt       DateTime @updatedAt
->   
->   @@index([name])
->   @@index([nameEn])
->   @@index([source])
-> }
-> 
-> model User {
->   id           String     @id @default(cuid())
->   email        String     @unique
->   passwordHash String
->   displayName  String?
->   favorites    Favorite[]
->   folders      Folder[]
-> 
->   createdAt DateTime @default(now())
->   updatedAt DateTime @updatedAt
-> }
-> 
-> model Favorite {
->   id       String @id @default(cuid())
->   userId   String
->   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
->   name     String
->   brand    String?
->   imageData String?
->   analysis Json
->   notes    String?
->   folderId  String?
->   folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
-> 
->   createdAt DateTime @default(now())
->   updatedAt DateTime @updatedAt
-> 
->   @@index([userId, createdAt])
-> }
-> 
-> model Folder {
->   id        String     @id @default(cuid())
->   userId    String
->   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
->   name      String
->   color     String     @default("#f97316")
->   favorites Favorite[]
-> 
->   createdAt DateTime @default(now())
->   updatedAt DateTime @updatedAt
-> 
->   @@index([userId, createdAt])
-> }
-> 
-> ```
->
-> 
+The complete Prisma schema with all four models and their index declarations is in **Appendix C**.
+
 
 ### 3.3 Query Execution and the Cost-Based Planner
 
@@ -475,6 +405,78 @@ dsci551-project-meowlytics/
 │   ├── explain/          Six EXPLAIN ANALYZE evidence scripts
 │   ├── slides/           Demo slide deck (PDF + PPTX)
 │   └── docs/
-│       └── FINAL_REPORT.md   ← this file
+│       └── FINAL_REPORT.md   ← this file (incl. Appendix C: Prisma schema)
 └── .env                  Demo-safe local configuration
+```
+
+## Appendix C: Prisma Schema
+
+Complete schema referenced in Sec. 3.2. Indexes are declared via `@@index`.
+
+```prisma
+model Ingredient {
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String
+  aliases         String[]
+  category        String
+  healthImpact    String
+  description     String
+  benefits        String[]
+  concerns        String[]
+  suitableFor     String[]
+  notSuitableFor  String[]
+  source          String
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([name])
+  @@index([nameEn])
+  @@index([source])
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  displayName  String?
+  favorites    Favorite[]
+  folders      Folder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Favorite {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  brand    String?
+  imageData String?
+  analysis Json
+  notes    String?
+  folderId  String?
+  folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+model Folder {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String     @default("#f97316")
+  favorites Favorite[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
 ```
